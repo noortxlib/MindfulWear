@@ -46,13 +46,13 @@
             android:backgroundTint="#99cc99">
 
             <EditText
-                android:id="@+id/editTextText2"
+                android:id="@+id/login_email"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="32dp"
                 android:background="#EEEFEE"
                 android:ems="10"
-                android:hint="Email"
+                android:hint="Username"
                 android:inputType="text"
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +60,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/editTextTextPassword3"
+                android:id="@+id/login_password"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="32dp"
@@ -71,10 +71,10 @@
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextText2" />
+                app:layout_constraintTop_toBottomOf="@+id/login_email" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/login_forgotpassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -83,10 +83,10 @@
                 android:textColor="#99cc99"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword3" />
+                app:layout_constraintTop_toBottomOf="@+id/login_password" />
 
             <Button
-                android:id="@+id/btnsignin"
+                android:id="@+id/btnlogin"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_marginStart="16dp"
@@ -98,7 +98,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword3" />
+                app:layout_constraintTop_toBottomOf="@+id/login_password" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -110,14 +110,14 @@
                 app:layout_constraintStart_toStartOf="parent">
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/signupredirect"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
                     android:text="New User? " />
 
                 <TextView
-                    android:id="@+id/existinguser"
+                    android:id="@+id/newuser"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="0"
