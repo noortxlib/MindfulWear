@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "316601853931",
+    "firebase_url": "https://mindfulwear-b3985-default-rtdb.firebaseio.com",
+    "project_id": "mindfulwear-b3985",
+    "storage_bucket": "mindfulwear-b3985.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316601853931:android:8310dac1563294294a1bae",
+        "android_client_info": {
+          "package_name": "com.example.mindfulwear"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDApRBcu7VXJPhFo5rq9S-ZCkNVwnIGX1I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
