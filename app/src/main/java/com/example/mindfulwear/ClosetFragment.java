@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
+
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -34,6 +36,8 @@ public class ClosetFragment extends Fragment {
     ArrayList<DataClass> dataList;
     MyAdapter adapter;
 
+    SearchView searchView;
+
 
     @Nullable
     @Override
@@ -45,6 +49,8 @@ public class ClosetFragment extends Fragment {
         dataList = new ArrayList<>();
         adapter = new MyAdapter(requireContext(), dataList);
         gridView.setAdapter(adapter);
+        searchView = view.findViewById(R.id.search);
+        searchView.clearFocus();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(false);
@@ -85,6 +91,19 @@ public class ClosetFragment extends Fragment {
             }
         });
 
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                searchList(newText);
+                return true;
+            }
+        });
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -96,9 +115,15 @@ public class ClosetFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        databaseReference.removeEventListener(eventListener);
+    public void searchList(String text){
+        ArrayList<DataClass> searchList = new ArrayList<>();
+        for (DataClass dataClass: dataList){
+            if(dataClass.getDataCategory().toLowerCase().contains(text.toLowerCase()) ||
+            dataClass.getDataColour().toLowerCase().contains(text.toLowerCase())){
+                searchList.add(dataClass);
+            }
+        }
+
+        adapter.searchDataList(searchList);
     }
 }

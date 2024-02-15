@@ -36,6 +36,11 @@ public class MyAdapter extends BaseAdapter {
         return dataList.size();
     }
 
+    public void searchDataList(List<DataClass> searchList){
+        dataList = searchList;
+        notifyDataSetChanged();
+    }
+
     @Override
     public Object getItem(int i) {
         return null;
@@ -45,6 +50,7 @@ public class MyAdapter extends BaseAdapter {
     public long getItemId(int i) {
         return 0;
     }
+
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
