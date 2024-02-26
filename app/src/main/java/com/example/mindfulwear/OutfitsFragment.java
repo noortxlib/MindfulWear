@@ -1,64 +1,124 @@
 package com.example.mindfulwear;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link OutfitsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class OutfitsFragment extends Fragment {
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import org.threeten.bp.LocalDate;
 
-    public OutfitsFragment() {
-        // Required empty public constructor
+import java.util.ArrayList;
+
+public class OutfitsFragment extends Fragment implements CalenderAdapter.OnItemListener {
+    private TextView monthYearText;
+    private RecyclerView calendarRecyclerView;
+    private ListView eventListView;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_outfits, container, false);
+
+        calendarRecyclerView = view.findViewById(R.id.calendarRecyclerView);
+        monthYearText = view.findViewById(R.id.monthYearTV);
+        eventListView = view.findViewById(R.id.eventListView);
+        setWeekView();
+
+        Button previousWeekButton = view.findViewById(R.id.previousWeek);
+        Button nextWeekButton = view.findViewById(R.id.nextWeek);
+        Button newEvent = view.findViewById(R.id.newEvent);
+
+        previousWeekButton.setOnClickListener(v -> previousWeekAction());
+        nextWeekButton.setOnClickListener(v -> nextWeekAction());
+        newEvent.setOnClickListener(v -> newEventAction());
+
+        return view;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OutfitsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static OutfitsFragment newInstance(String param1, String param2) {
-        OutfitsFragment fragment = new OutfitsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    private void setWeekView() {
+        monthYearText.setText(CalenderUtils.monthYearFromDate(CalenderUtils.selectedDate));
+        ArrayList<LocalDate> days = CalenderUtils.daysInWeekArray(CalenderUtils.selectedDate);
+
+        CalenderAdapter calendarAdapter = new CalenderAdapter(days, this);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getContext(), 7);
+        calendarRecyclerView.setLayoutManager(layoutManager);
+        calendarRecyclerView.setAdapter(calendarAdapter);
+        setEventAdapter();
+    }
+
+    public void previousWeekAction() {
+        CalenderUtils.selectedDate = CalenderUtils.selectedDate.minusWeeks(1);
+        setWeekView();
+    }
+
+    public void nextWeekAction() {
+        CalenderUtils.selectedDate = CalenderUtils.selectedDate.plusWeeks(1);
+        setWeekView();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public void onItemClick(int position, LocalDate date) {
+        CalenderUtils.selectedDate = date;
+        setWeekView();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_outfits, container, false);
+    public void onResume() {
+        super.onResume();
+        setEventAdapter();
     }
+
+    private void setEventAdapter() {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = currentUser.getUid();
+        DatabaseReference outfitsReference = FirebaseDatabase.getInstance().getReference("Users").child(userID).child("Outfits");
+        outfitsReference.orderByChild("date").equalTo(CalenderUtils.selectedDate.toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Event> dailyEvents = new ArrayList<>();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String jacketUrl = snapshot.child("jacketImageURL").getValue(String.class);
+                    String topUrl = snapshot.child("topImageURL").getValue(String.class);
+                    String bottomUrl = snapshot.child("bottomImageURL").getValue(String.class);
+                    String shoesUrl = snapshot.child("shoeImageURL").getValue(String.class);
+
+                    Event event = new Event(CalenderUtils.selectedDate, jacketUrl, topUrl, bottomUrl, shoesUrl);
+                    dailyEvents.add(event);
+                }
+
+                EventAdapter eventAdapter = new EventAdapter(getContext(), dailyEvents);
+                eventListView.setAdapter(eventAdapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Failed to display outfit data", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void newEventAction() {
+        startActivity(new Intent(getContext(), EventEditActivity.class));
+    }
+
 }

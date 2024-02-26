@@ -69,17 +69,19 @@ public class ClosetFragment extends Fragment {
                 dataList.clear();
                 for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                     DataClass dataClass = dataSnapshot.getValue(DataClass.class);
-                    dataClass.setKey(dataSnapshot.getKey());
+                    if (dataClass != null) {
+                        dataClass.setKey(dataSnapshot.getKey());
 
-                    // Checks if item is favourite
-                    Boolean isFavourite = dataSnapshot.child("favourite").getValue(Boolean.class);
-                    if (isFavourite == true) {
-                        dataClass.setFavourite(true);
-                    } else {
-                        dataClass.setFavourite(false);
+                        // Checks if item is favourite
+                        Boolean isFavourite = dataSnapshot.child("favourite").getValue(Boolean.class);
+                        if (isFavourite == true) {
+                            dataClass.setFavourite(true);
+                        } else {
+                            dataClass.setFavourite(false);
+                        }
+
+                        dataList.add(dataClass);
                     }
-
-                    dataList.add(dataClass);
                 }
                 adapter.notifyDataSetChanged();
                 dialog.dismiss();
