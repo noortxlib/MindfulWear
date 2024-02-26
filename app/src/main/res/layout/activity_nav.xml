@@ -6,10 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".Nav">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@color/sagegreen"
+        app:layout_constraintBottom_toTopOf="@+id/frame_layout"/>
+
     <ImageView
         android:id="@+id/imageView9"
         android:layout_width="250dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         app:layout_constraintBottom_toTopOf="@+id/frame_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

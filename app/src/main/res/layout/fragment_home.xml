@@ -10,19 +10,18 @@
         android:id="@+id/inspo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="Explore Outfit Inspiration"
-        android:textSize="25dp"
-        android:textColor="@color/sagegreen"
-        android:textStyle="bold"
-        android:gravity="center" />
+        android:padding="20dp"
+        android:text="Explore Outfit Inspiration..."
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:gravity="left" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/inspo"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="65dp"/>
 
     <ProgressBar
         android:id="@+id/progressBar"

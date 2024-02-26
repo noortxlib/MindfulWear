@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,26 +27,25 @@ public class ProfileFragment extends Fragment {
 
     Button button;
     FirebaseUser user;
-    TextView user_email, clothingItemsNumber, favouriteItemsNumber;
+    TextView user_email, clothingItemsNumber, favouriteItemsNumber, outfitsNumber;
     DatabaseReference databaseReference;
-
 
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         user_email = view.findViewById(R.id.user_details);
         button = view.findViewById(R.id.logout);
-        clothingItemsNumber= view.findViewById(R.id.clothingItemsNumber);
+        clothingItemsNumber = view.findViewById(R.id.clothingItemsNumber);
         favouriteItemsNumber = view.findViewById(R.id.favouriteItemsNumber);
+        outfitsNumber = view.findViewById(R.id.outfitsNumber);
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        if (user ==  null){
+        if (user == null) {
             Intent intent = new Intent(getContext(), Login.class);
             startActivity(intent);
             getActivity().finish();
@@ -53,6 +53,7 @@ public class ProfileFragment extends Fragment {
             user_email.setText(user.getEmail());
             getClothingItemsCount();
             getFavoriteItemsCount();
+            getOutfitsCount();
         }
 
         button.setOnClickListener(new View.OnClickListener() {
@@ -73,17 +74,17 @@ public class ProfileFragment extends Fragment {
                 .child(user.getUid()).child("Items");
 
         itemsReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        long count = dataSnapshot.getChildrenCount();
-                        clothingItemsNumber.setText(String.valueOf(count));
-                    }
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count = dataSnapshot.getChildrenCount();
+                clothingItemsNumber.setText(String.valueOf(count));
+            }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Handle database error
-                    }
-                });
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Error getting clothing items count", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void getFavoriteItemsCount() {
@@ -104,8 +105,27 @@ public class ProfileFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                // Handle database error
+                Toast.makeText(getContext(), "Error getting favourite items count", Toast.LENGTH_SHORT).show();
             }
         });
     }
+
+    private void getOutfitsCount() {
+        DatabaseReference outfitsReference = FirebaseDatabase.getInstance().getReference("Users")
+                .child(user.getUid()).child("Outfits");
+
+        outfitsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                long count = dataSnapshot.getChildrenCount();
+                outfitsNumber.setText(String.valueOf(count));
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getContext(), "Error getting outfits count", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 }
