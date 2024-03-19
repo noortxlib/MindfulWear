@@ -7,13 +7,13 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.YearMonth;
@@ -93,10 +93,14 @@ public class CalenderFragment extends Fragment implements CalenderAdapter.OnItem
     }
 
     @Override
-    public void onItemClick(int position, LocalDate dayText) {
-        if (!dayText.equals("")) {
-            String message = "Selected Date " + dayText + " " + monthYearFromDate(selectedDate);
-            Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-        }
+    public void onItemClick(int position, LocalDate date) {
+        CalenderUtils.selectedDate = date;
+        ArrayList<LocalDate> days = CalenderUtils.daysInMonthArray(CalenderUtils.selectedDate);
+        CalenderAdapter calendarAdapter = new CalenderAdapter(days, this);
+        calendarRecyclerView.setAdapter(calendarAdapter);
+
+        Intent intent = new Intent(getContext(), ViewOutfit.class);
+        intent.putExtra("selectedDate", date.toString());
+        startActivity(intent);
     }
 }
